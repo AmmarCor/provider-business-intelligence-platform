@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+ * Theme tokens
+ * -------------------------------------------------------------------------
+ * Every color used by a component resolves to one of these CSS variables.
+ * Values are expressed as "R G B" triples so Tailwind's `rgb(var(--x) / <alpha-value>)`
+ * pattern can still apply opacity modifiers (e.g. bg-surface/80).
+ *
+ * :root holds the Light theme (default / no-JS fallback).
+ * .dark overrides every token with the original Dark theme values —
+ * the Dark theme's appearance is unchanged from before this system existed.
+ * ------------------------------------------------------------------------ */
+
+:root {
+  /* surfaces */
+  --bg-canvas: 246 247 249;        /* page background */
+  --bg-surface: 255 255 255;       /* cards / panels */
+  --bg-surface-hover: 241 242 245; /* secondary surface, active nav, hover rows */
+  --bg-sidebar: 255 255 255;       /* sidebar / chrome */
+
+  /* borders */
+  --border-default: 228 231 236;
+  --border-strong: 208 213 221;
+
+  /* text */
+  --fg-primary: 15 17 21;
+  --fg-secondary: 60 66 87;
+  --fg-tertiary: 107 114 128;
+  --fg-quaternary: 138 147 166;
+  --fg-faint: 180 186 198;
+
+  /* charts */
+  --chart-grid: 236 238 241;
+  --chart-axis: 216 220 227;
+  --chart-tick: 138 147 166;
+  --chart-hover: 241 242 245;
+  --chart-tile-gap: 246 247 249;
+}
+
+.dark {
+  /* surfaces */
+  --bg-canvas: 11 13 18;
+  --bg-surface: 18 21 28;
+  --bg-surface-hover: 23 27 36;
+  --bg-sidebar: 7 8 11;
+
+  /* borders */
+  --border-default: 30 35 46;
+  --border-strong: 42 48 64;
+
+  /* text */
+  --fg-primary: 237 239 243;
+  --fg-secondary: 196 201 212;
+  --fg-tertiary: 139 147 166;
+  --fg-quaternary: 91 99 118;
+  --fg-faint: 61 68 89;
+
+  /* charts */
+  --chart-grid: 30 35 46;
+  --chart-axis: 42 48 64;
+  --chart-tick: 139 147 166;
+  --chart-hover: 23 27 36;
+  --chart-tile-gap: 11 13 18;
+}
+
+* {
+  border-color: rgb(var(--border-default));
+}
+
+html, body {
+  background-color: rgb(var(--bg-canvas));
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: rgb(var(--fg-primary));
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border-strong));
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--fg-faint));
+}
+
+:focus-visible {
+  outline: 2px solid #5B8DEF;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.tabular {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--bg-surface)) 25%,
+    rgb(var(--bg-surface-hover)) 37%,
+    rgb(var(--bg-surface)) 63%
+  );
+  background-size: 450px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
