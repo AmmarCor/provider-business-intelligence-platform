@@ -98,6 +98,7 @@ export function OverviewPage() {
         label: "Total bundle views",
         value: formatNumber(data.totalViews, { compact: true }),
         icon: <Eye className="h-4 w-4" />,
+        metricId: "totalBundleViews" as const,
       },
       {
         label: "Referral requests",
@@ -105,16 +106,19 @@ export function OverviewPage() {
         delta: data.growth.growthPct,
         deltaLabel: "vs prior period",
         icon: <TrendingUp className="h-4 w-4" />,
+        metricId: "referralRequests" as const,
       },
       {
         label: "View-to-referral rate",
         value: formatPercent(data.conversionRate, { digits: 2 }),
         icon: <GitBranch className="h-4 w-4" />,
+        metricId: "viewToReferralRate" as const,
       },
       {
         label: "Bundles priced above market",
         value: `${data.abovePricing} / ${data.bundles.length}`,
         icon: <DollarSign className="h-4 w-4" />,
+        metricId: "bundlesPricedAboveMarket" as const,
       },
     ],
     [data]
@@ -161,13 +165,15 @@ export function OverviewPage() {
             <CardSkeleton height={260} />
           ) : (
             <Card>
-              <CardHeader title="Views trend" subtitle="Total marketplace views across your portfolio" />
+              <CardHeader title="Views trend" subtitle="Total marketplace views across your portfolio" 
+              metricId="viewsTrend"
+            />
               <AreaTrendChart data={data.trend} valueLabel="Views" />
             </Card>
           )}
         </div>
         <Card>
-          <CardHeader title="Explore every module" subtitle="Jump into a module for the full breakdown" />
+          <CardHeader title="Explore every module" subtitle="Jump into a module for the full breakdown" metricId="exploreModulesCard" />
           <div className="flex flex-col gap-2">
             {[
               { to: "/visibility", label: "Am I visible?", icon: Eye },
@@ -201,7 +207,7 @@ export function OverviewPage() {
           <CardSkeleton height={160} />
         ) : (
           <Card>
-            <CardHeader title="Top performance insights" subtitle="The most important signals right now — see all of them in Performance Insights" />
+            <CardHeader title="Top performance insights" subtitle="The most important signals right now — see all of them in Performance Insights" metricId="topPerformanceInsightsCard" />
             <div className="flex flex-col gap-2.5">
               {data.topInsights.length === 0 ? (
                 <p className="text-sm text-foreground-tertiary">No notable signals for the current filters — performance looks stable.</p>

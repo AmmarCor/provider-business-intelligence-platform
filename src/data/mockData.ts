@@ -215,20 +215,39 @@ function generateDailyViews(rng: () => number, bundles: Bundle[], days: number):
     return randFloat(rng, 0.3, 1.0) ** 1.6 * randFloat(rng, 3, 22);
   });
 
-  // Gentle overall upward trend + weekly seasonality (lower on weekends)
+  // A slow-moving "market momentum" factor shared across every bundle on a
+  // given day, built as a smoothed random walk (an AR(1) process) rather
+  // than independent day-to-day noise. This is what makes the aggregated
+  // trend read as gentle, organic multi-day waves instead of an ECG-style
+  // jitter -- a good day tends to be followed by another good day.
+  let momentum = 1;
+  const momentumByDay: number[] = [];
+  for (let d = 0; d < days; d++) {
+    const shock = gaussian(rng, 0, 0.05);
+    momentum = momentum * 0.92 + (1 + shock) * 0.08;
+    momentumByDay.push(momentum);
+  }
+
+  // Gentle overall upward trend + a smooth (continuous, not a hard
+  // weekday/weekend cutoff) weekly wave, with a slightly different
+  // amplitude each week so no two weeks look identical.
   for (let d = days - 1; d >= 0; d--) {
     const date = new Date(today);
     date.setDate(date.getDate() - d);
     const iso = date.toISOString().slice(0, 10);
+    const dayIndex = days - 1 - d; // 0 at the start of the window, days-1 today
     const dayOfWeek = date.getDay();
-    const weekendFactor = dayOfWeek === 0 || dayOfWeek === 6 ? 0.6 : 1.0;
-    const trendFactor = 0.75 + ((days - d) / days) * 0.5; // ramps up over the window
+
+    const weekAmplitude = 0.12 + 0.03 * Math.sin(dayIndex / 9.7);
+    const weekFactor = 1 - weekAmplitude * (0.5 - 0.5 * Math.cos(((dayOfWeek - 3) / 7) * 2 * Math.PI));
+    const trendFactor = 0.78 + (dayIndex / days) * 0.5; // ramps up over the window
+    const dayMomentum = momentumByDay[dayIndex];
 
     bundles.forEach((bundle, i) => {
       const base = popularity[i];
       if (base === 0) return;
-      const noise = Math.max(0, gaussian(rng, 1, 0.35));
-      const views = Math.round(base * weekendFactor * trendFactor * noise);
+      const noise = Math.max(0.3, gaussian(rng, 1, 0.16));
+      const views = Math.round(base * weekFactor * trendFactor * dayMomentum * noise);
       if (views > 0) {
         records.push({ date: iso, bundleId: bundle.id, views });
       }
@@ -262,8 +281,13 @@ function buildReferralBatch(
 ): Referral[] {
   const batch: Referral[] = [];
   for (let i = 0; i < count; i++) {
-    const ageDays = Math.round(Math.abs(gaussian(rng, ageMean, ageStdDev)));
-    const cappedAge = Math.min(ageDays, 400);
+    // Recency-biased sampling (rather than a symmetric hump centered on
+    // ageMean): more referrals land closer to today than far in the past,
+    // so the aggregated Referral Trend rises toward the present -- the
+    // same overall shape as the Views trend -- while still tapering off
+    // smoothly for older dates instead of a fixed, artificial hump.
+    const maxWindow = Math.min(400, ageMean + ageStdDev * 1.5);
+    const cappedAge = Math.round(Math.pow(rng(), 1.7) * maxWindow);
     const createdAt = new Date(Date.now() - cappedAge * 86400000).toISOString().slice(0, 10);
     const status = STATUS_BY_AGE(cappedAge, rng);
     const payer = pick(rng, payers);

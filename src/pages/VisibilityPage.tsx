@@ -8,6 +8,7 @@ import { AreaTrendChart } from "@/components/charts/AreaTrendChart";
 import { CategoryBarChart } from "@/components/charts/CategoryBarChart";
 import { StateHeatGrid } from "@/components/charts/StateHeatGrid";
 import { ViewsTreemap } from "@/components/charts/ViewsTreemap";
+import { MarketplaceOpportunityMap } from "@/components/charts/MarketplaceOpportunityMap";
 import { RankingTable } from "@/components/tables/RankingTable";
 import { InsightsPanel } from "@/components/ui/InsightCard";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -86,22 +87,26 @@ export function VisibilityPage() {
               delta={data.trendDelta}
               deltaLabel="vs start of period"
               icon={<Eye className="h-4 w-4" />}
+              metricId="totalBundleViews"
             />
             <KpiTile
               label="Zero-view bundles"
               value={String(data.zeroViewBundles.length)}
               icon={<EyeOff className="h-4 w-4" />}
+              metricId="zeroViewBundles"
               invertDelta
             />
             <KpiTile
               label="Top state"
               value={data.byState[0] ? data.byState[0].state : "—"}
               icon={<MapPin className="h-4 w-4" />}
+              metricId="topState"
             />
             <KpiTile
               label="Active bundles viewed"
               value={`${data.byBundle.filter((b) => b.views > 0).length} / ${data.bundles.length}`}
               icon={<TrendingUp className="h-4 w-4" />}
+              metricId="activeBundlesViewed"
             />
           </>
         )}
@@ -113,7 +118,9 @@ export function VisibilityPage() {
             <CardSkeleton height={260} />
           ) : (
             <Card>
-              <CardHeader title="Views trend" subtitle="Daily marketplace views across the selected filters" />
+              <CardHeader title="Views trend" subtitle="Daily marketplace views across the selected filters" 
+              metricId="viewsTrend"
+            />
               {data.trend.length === 0 ? <EmptyState /> : <AreaTrendChart data={data.trend} valueLabel="Views" />}
             </Card>
           )}
@@ -122,7 +129,9 @@ export function VisibilityPage() {
           <CardSkeleton height={260} />
         ) : (
           <Card>
-            <CardHeader title="Views by category" subtitle="Which specialties get discovered most" />
+            <CardHeader title="Views by category" subtitle="Which specialties get discovered most" 
+              metricId="viewsByCategory"
+            />
             {data.byCategory.length === 0 ? (
               <EmptyState />
             ) : (
@@ -137,7 +146,9 @@ export function VisibilityPage() {
           <CardSkeleton height={220} />
         ) : (
           <Card>
-            <CardHeader title="Views by state" subtitle="Geographic concentration of payer attention" />
+            <CardHeader title="Views by state" subtitle="Geographic concentration of payer attention" 
+              metricId="viewsByState"
+            />
             {data.byState.length === 0 ? <EmptyState /> : <StateHeatGrid data={data.byState} />}
           </Card>
         )}
@@ -145,7 +156,9 @@ export function VisibilityPage() {
           <CardSkeleton height={220} />
         ) : (
           <Card>
-            <CardHeader title="Views by location" subtitle="City-level breakdown, sized by share of total views" />
+            <CardHeader title="Views by location" subtitle="City-level breakdown, sized by share of total views" 
+              metricId="viewsByLocation"
+            />
             {data.byLocation.length === 0 ? (
               <EmptyState />
             ) : (
@@ -157,12 +170,18 @@ export function VisibilityPage() {
         )}
       </div>
 
+      <div>
+        {loading ? <CardSkeleton height={420} /> : <MarketplaceOpportunityMap />}
+      </div>
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {loading ? (
           <CardSkeleton height={260} />
         ) : (
           <Card>
-            <CardHeader title="Top viewed bundles" subtitle="Your strongest visibility performers" />
+            <CardHeader title="Top viewed bundles" subtitle="Your strongest visibility performers" 
+              metricId="topViewedBundles"
+            />
             <RankingTable
               rows={data.topViewed.map((b) => ({
                 bundle: b.bundle,
@@ -176,7 +195,9 @@ export function VisibilityPage() {
           <CardSkeleton height={260} />
         ) : (
           <Card>
-            <CardHeader title="Lowest viewed bundles" subtitle="Listings that may need a refresh" />
+            <CardHeader title="Lowest viewed bundles" subtitle="Listings that may need a refresh" 
+              metricId="lowestViewedBundles"
+            />
             <RankingTable
               rows={data.lowestViewed.map((b) => ({
                 bundle: b.bundle,
@@ -194,7 +215,9 @@ export function VisibilityPage() {
           <CardHeader
             title="Zero-view bundles"
             subtitle="These bundles have not been seen by a single payer in the selected period"
-          />
+          
+              metricId="zeroViewBundles"
+            />
           <RankingTable
             rows={data.zeroViewBundles.map((b) => ({
               bundle: b.bundle,

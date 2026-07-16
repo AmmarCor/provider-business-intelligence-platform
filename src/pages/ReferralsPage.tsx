@@ -84,22 +84,26 @@ export function ReferralsPage() {
               delta={data.growth.growthPct}
               deltaLabel="vs prior period"
               icon={<GitBranch className="h-4 w-4" />}
+              metricId="totalReferrals"
             />
             <KpiTile
-              label="Referral success rate"
+              label="Referrals with Invoices"
               value={formatPercent(data.successRate)}
               icon={<CheckCircle2 className="h-4 w-4" />}
+              metricId="referralSuccessRate"
             />
             <KpiTile
               label="Stale referrals (21d+ inactive)"
               value={String(data.stale.length)}
               icon={<Clock className="h-4 w-4" />}
+              metricId="staleReferrals"
               invertDelta
             />
             <KpiTile
               label="Referrals without invoices"
               value={String(data.withoutInvoices.length)}
               icon={<FileWarning className="h-4 w-4" />}
+              metricId="referralsWithoutInvoices"
               invertDelta
             />
           </>
@@ -111,7 +115,9 @@ export function ReferralsPage() {
           <CardSkeleton height={240} />
         ) : (
           <Card>
-            <CardHeader title="Referrals by state" subtitle="Where your referral demand is concentrated" />
+            <CardHeader title="Referrals by state" subtitle="Where your referral demand is concentrated" 
+              metricId="referralsByState"
+            />
             {data.byState.length === 0 ? <EmptyState /> : <StateHeatGrid data={data.byState} />}
           </Card>
         )}
@@ -119,7 +125,9 @@ export function ReferralsPage() {
           <CardSkeleton height={240} />
         ) : (
           <Card>
-            <CardHeader title="Referrals by payer" subtitle="Top payer organizations sending referrals" />
+            <CardHeader title="Referrals by payer" subtitle="Top payer organizations sending referrals" 
+              metricId="referralsByPayer"
+            />
             <HorizontalBarList color="#8B7CF6" items={data.byPayer.map((p) => ({ label: p.payerName, value: p.value }))} maxItems={8} />
           </Card>
         )}
@@ -130,7 +138,9 @@ export function ReferralsPage() {
           <CardSkeleton height={220} />
         ) : (
           <Card>
-            <CardHeader title="Referrals by bundle" subtitle="Referral volume ranked across your portfolio" />
+            <CardHeader title="Referrals by bundle" subtitle="Referral volume ranked across your portfolio" 
+              metricId="referralsByBundle"
+            />
             <HorizontalBarList color="#5B8DEF" items={data.byBundle} maxItems={10} />
           </Card>
         )}
@@ -142,6 +152,7 @@ export function ReferralsPage() {
             title="Referrals needing attention"
             subtitle="Stale (21+ days inactive) or old with no invoice (90+ days)"
             action={<Badge tone="critical">{data.stale.length + data.oldNoInvoice.length} flagged</Badge>}
+            metricId="needsAttentionReferrals"
           />
           <ReferralTable referrals={[...data.stale, ...data.oldNoInvoice].filter((r, i, arr) => arr.findIndex((x) => x.id === r.id) === i)} />
         </Card>
@@ -152,7 +163,9 @@ export function ReferralsPage() {
           <CardSkeleton height={340} />
         ) : (
           <Card>
-            <CardHeader title="All referrals" subtitle="Sortable log of referral activity for the current filters" />
+            <CardHeader title="All referrals" subtitle="Sortable log of referral activity for the current filters" 
+              metricId="allReferralsTable"
+            />
             <ReferralTable referrals={data.referralRecords} />
           </Card>
         )}

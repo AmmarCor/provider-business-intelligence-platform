@@ -23,8 +23,8 @@ export function RankingTable({ rows, emptyMessage }: { rows: RankingRow[]; empty
             <th className="py-2 pr-3 font-medium">#</th>
             <th className="py-2 pr-3 font-medium">Bundle</th>
             <th className="py-2 pr-3 font-medium">Category</th>
-            <th className="py-2 pr-3 text-right font-medium">Primary</th>
-            {rows[0]?.secondaryLabel && <th className="py-2 pl-3 text-right font-medium">Secondary</th>}
+            <th className="py-2 pr-3 text-right font-medium">{rows[0]?.primaryLabel ?? "Primary"}</th>
+            {rows[0]?.secondaryLabel && <th className="py-2 pl-3 text-right font-medium">{rows[0].secondaryLabel}</th>}
           </tr>
         </thead>
         <tbody>

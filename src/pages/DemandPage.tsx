@@ -93,22 +93,26 @@ export function DemandPage() {
               delta={data.growth.growthPct}
               deltaLabel="vs prior period"
               icon={<GitBranch className="h-4 w-4" />}
+              metricId="referralRequests"
             />
             <KpiTile
               label="Overall conversion rate"
               value={formatPercent(data.overallConversion, { digits: 2 })}
               icon={<Percent className="h-4 w-4" />}
+              metricId="overallConversionRate"
             />
             <KpiTile
               label="Bundles underconverting"
               value={String(data.highViewsLowReferrals.length)}
               icon={<TrendingDown className="h-4 w-4" />}
+              metricId="bundlesUnderconverting"
               invertDelta
             />
             <KpiTile
               label="Bundles above average conversion"
               value={String(data.performance.filter((p) => p.conversionRate > data.overallConversion).length)}
               icon={<TrendingUp className="h-4 w-4" />}
+              metricId="bundlesAboveAverageConversion"
             />
           </>
         )}
@@ -120,7 +124,9 @@ export function DemandPage() {
             <CardSkeleton height={260} />
           ) : (
             <Card>
-              <CardHeader title="Referral trend" subtitle="Referral requests created per day across the selected filters" />
+              <CardHeader title="Referral trend" subtitle="Referral requests created per day across the selected filters" 
+              metricId="referralTrend"
+            />
               {data.trend.length === 0 ? <EmptyState /> : <AreaTrendChart data={data.trend} color="#3ECF8E" valueLabel="Referrals" />}
             </Card>
           )}
@@ -129,7 +135,9 @@ export function DemandPage() {
           <CardSkeleton height={260} />
         ) : (
           <Card>
-            <CardHeader title="Referral requests per bundle" subtitle="Top 10 bundles by referral volume" />
+            <CardHeader title="Referral requests per bundle" subtitle="Top 10 bundles by referral volume" 
+              metricId="referralsPerBundle"
+            />
             <HorizontalBarList
               color="#3ECF8E"
               items={data.referralsPerBundle.map((p) => ({ label: p.bundle.name, value: p.referrals }))}
@@ -145,14 +153,15 @@ export function DemandPage() {
             title="High views, low referrals"
             subtitle="Bundles attracting attention that isn't converting — pricing is the most common cause"
             action={<Badge tone="warning">Needs review</Badge>}
+            metricId="highViewsLowReferrals"
           />
           <RankingTable
             rows={data.highViewsLowReferrals.map((p) => ({
               bundle: p.bundle,
               primaryValue: p.views,
               secondaryValue: p.referrals,
-              primaryLabel: "Views",
-              secondaryLabel: "Referrals",
+              primaryLabel: "Bundle Views",
+              secondaryLabel: "Referral Requests",
             }))}
           />
         </Card>
@@ -163,14 +172,16 @@ export function DemandPage() {
           <CardSkeleton height={260} />
         ) : (
           <Card>
-            <CardHeader title="High performing bundles" subtitle="Best view-to-referral conversion in your portfolio" />
+            <CardHeader title="High performing bundles" subtitle="Best view-to-referral conversion in your portfolio" 
+              metricId="highPerformingBundles"
+            />
             <RankingTable
               rows={data.highPerforming.map((p) => ({
                 bundle: p.bundle,
                 primaryValue: Math.round(p.conversionRate * 10000) / 100,
                 secondaryValue: p.referrals,
-                primaryLabel: "Conversion %",
-                secondaryLabel: "Referrals",
+                primaryLabel: "Referral Conversion Rate (%)",
+                secondaryLabel: "Referral Requests",
               }))}
             />
           </Card>
@@ -179,14 +190,16 @@ export function DemandPage() {
           <CardSkeleton height={260} />
         ) : (
           <Card>
-            <CardHeader title="Low performing bundles" subtitle="Bundles with meaningful views but weak conversion" />
+            <CardHeader title="Low performing bundles" subtitle="Bundles with meaningful views but weak conversion" 
+              metricId="lowPerformingBundles"
+            />
             <RankingTable
               rows={data.lowPerforming.map((p) => ({
                 bundle: p.bundle,
                 primaryValue: Math.round(p.conversionRate * 10000) / 100,
                 secondaryValue: p.views,
-                primaryLabel: "Conversion %",
-                secondaryLabel: "Views",
+                primaryLabel: "Referral Conversion Rate (%)",
+                secondaryLabel: "Bundle Views",
               }))}
             />
           </Card>

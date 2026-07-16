@@ -35,8 +35,18 @@ import {
   generateVisibilityInsights,
 } from "@/utils/analytics";
 import { Insight, INSIGHT_CATEGORY_LABELS, InsightCategory } from "@/types";
+import { MetricId } from "@/constants/metricDefinitions";
 
 const CATEGORY_ORDER: InsightCategory[] = ["opportunity", "warning", "growth", "pricing", "referral", "marketplace"];
+
+const CATEGORY_METRIC_IDS: Record<InsightCategory, MetricId> = {
+  opportunity: "insightCategoryOpportunity",
+  warning: "insightCategoryWarning",
+  growth: "insightCategoryGrowth",
+  pricing: "insightCategoryPricing",
+  referral: "insightCategoryReferral",
+  marketplace: "insightCategoryMarketplace",
+};
 
 export function PerformanceInsightsPage() {
   const { filters } = useFilters();
@@ -130,10 +140,10 @@ export function PerformanceInsightsPage() {
           Array.from({ length: 4 }).map((_, i) => <KpiSkeleton key={i} />)
         ) : (
           <>
-            <KpiTile label="Total insights this period" value={String(data.allInsights.length)} icon={<Sparkles className="h-4 w-4" />} />
-            <KpiTile label="Needs immediate attention" value={String(severityCounts.critical)} icon={<XCircle className="h-4 w-4" />} invertDelta />
-            <KpiTile label="Worth watching" value={String(severityCounts.warning)} icon={<AlertTriangle className="h-4 w-4" />} invertDelta />
-            <KpiTile label="Working well" value={String(severityCounts.positive)} icon={<CheckCircle2 className="h-4 w-4" />} />
+            <KpiTile label="Total insights this period" value={String(data.allInsights.length)} icon={<Sparkles className="h-4 w-4" />} metricId="totalInsightsCount" />
+            <KpiTile label="Needs immediate attention" value={String(severityCounts.critical)} icon={<XCircle className="h-4 w-4" />} metricId="needsImmediateAttention" invertDelta />
+            <KpiTile label="Worth watching" value={String(severityCounts.warning)} icon={<AlertTriangle className="h-4 w-4" />} metricId="worthWatching" invertDelta />
+            <KpiTile label="Working well" value={String(severityCounts.positive)} icon={<CheckCircle2 className="h-4 w-4" />} metricId="workingWell" />
           </>
         )}
       </div>
@@ -159,6 +169,7 @@ export function PerformanceInsightsPage() {
                 <CardHeader
                   title={INSIGHT_CATEGORY_LABELS[category]}
                   subtitle={`${insights.length} insight${insights.length > 1 ? "s" : ""} in this category for the current filters`}
+                  metricId={CATEGORY_METRIC_IDS[category]}
                 />
                 <InsightsPanel insights={insights} title="" />
               </Card>
